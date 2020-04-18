@@ -1,7 +1,7 @@
 FROM centos:7 AS build
 
 RUN yum -y update && \
-    yum -y install gcc libevent-devel make openssl-devel && \
+    yum -y install c-ares-devel gcc libevent-devel make openssl-devel && \
     yum clean all
 
 WORKDIR /tmp/pgbouncer
@@ -15,7 +15,7 @@ RUN make && make install
 FROM centos:7
 
 RUN yum -y update && \
-    yum -y install libevent openssl && \
+    yum -y install c-ares libevent openssl && \
     yum clean all
 
 RUN groupadd -r pgbouncer && useradd -r -s /sbin/nologin -d / -M -c "PgBouncer Server" -g pgbouncer pgbouncer
