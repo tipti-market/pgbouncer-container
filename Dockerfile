@@ -1,7 +1,7 @@
 FROM centos:7 AS build
 
 RUN yum -y update && \
-    yum -y install gcc libevent-devel make openssl-devel pam-devel && \
+    yum -y install gcc libevent-devel make openssl-devel && \
     yum clean all
 
 WORKDIR /tmp/pgbouncer
@@ -9,13 +9,13 @@ WORKDIR /tmp/pgbouncer
 ENV PGBOUNCER_VERSION=1.12.0
 RUN curl -sLO https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 RUN tar xzf pgbouncer-${PGBOUNCER_VERSION}.tar.gz --strip-components=1
-RUN ./configure --prefix=/usr --with-pam
+RUN ./configure --prefix=/usr
 RUN make && make install
 
 FROM centos:7
 
 RUN yum -y update && \
-    yum -y install libevent openssl pam && \
+    yum -y install libevent openssl && \
     yum clean all
 
 RUN groupadd -r pgbouncer && useradd -r -s /sbin/nologin -d / -M -c "PgBouncer Server" -g pgbouncer pgbouncer
