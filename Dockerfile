@@ -1,35 +1,19 @@
-# Build PgBouncer
-FROM centos:7 AS build
+FROM registry.access.redhat.com/ubi7/ubi
 
-RUN yum -y update && \
-    yum -y install c-ares-devel gcc libevent-devel make openssl-devel && \
-    yum clean all
+# Use EPEL 7 package (pre-release)
+ENV PGBOUNCER_PACKAGE=https://kojipkgs.fedoraproject.org//packages/pgbouncer/1.12.0/4.el7/x86_64/pgbouncer-1.12.0-4.el7.x86_64.rpm
 
-WORKDIR /tmp/pgbouncer
+RUN yum -y --disableplugin=subscription-manager update && \
+    yum -y --disableplugin=subscription-manager install ${PGBOUNCER_PACKAGE} && \
+    yum --disableplugin=subscription-manager clean all
 
-ENV PGBOUNCER_VERSION=1.12.0
-RUN curl -sLO https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz && \
-    tar xzf pgbouncer-${PGBOUNCER_VERSION}.tar.gz --strip-components=1 && \
-    ./configure --prefix=/usr && \
-    make && make install
+RUN chown pgbouncer:0 /etc/pgbouncer && \
+    chmod g=u /etc/pgbouncer && \
+    rm /etc/pgbouncer/pgbouncer.ini
 
-# Run PgBouncer
-FROM centos:7
-
-RUN yum -y update && \
-    yum -y install c-ares libevent openssl && \
-    yum clean all
-
-COPY --from=build /usr/bin/pgbouncer /usr/bin/pgbouncer
-
-RUN groupadd -r pgbouncer && \
-    useradd -r -g pgbouncer -M -d / -s /sbin/nologin -c "PgBouncer Server" pgbouncer && \
-    mkdir /etc/pgbouncer && \
-    chown pgbouncer:0 /etc/pgbouncer && \
-    chmod g+rw /etc/pgbouncer
-
+ADD entrypoint.sh /entrypoint.sh
 EXPOSE 5432
 USER pgbouncer
-ADD entrypoint.sh /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
