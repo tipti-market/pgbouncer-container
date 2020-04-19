@@ -1,10 +1,10 @@
 #!/bin/sh
-# Based on https://raw.githubusercontent.com/brainsam/pgbouncer/master/entrypoint.sh
+# Based on https://raw.githubusercontent.com/edoburu/docker-pgbouncer/master/entrypoint.sh
 
 set -e
 
 # Here are some parameters. See all on
-# https://pgbouncer.github.io/config.html
+# https://www.pgbouncer.org/config.html
 
 PG_CONFIG_DIR=/etc/pgbouncer
 
@@ -39,7 +39,7 @@ fi
 
 # Write the password with MD5 encryption, to avoid printing it during startup.
 # Notice that `docker inspect` will show unencrypted env variables.
-if [ -n "$DB_USER" -a -n "$DB_PASSWORD" ] && ! grep -q "^\"$DB_USER\"" ${PG_CONFIG_DIR}/userlist.txt; then
+if [ -n "$DB_USER" -a -n "$DB_PASSWORD" ] && ! grep -s "^\"$DB_USER\"" ${PG_CONFIG_DIR}/userlist.txt; then
   if [ "$AUTH_TYPE" != "plain" ]; then
      pass="md5$(echo -n "$DB_PASSWORD$DB_USER" | md5sum | cut -f 1 -d ' ')"
   else
