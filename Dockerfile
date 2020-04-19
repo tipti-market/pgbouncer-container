@@ -8,10 +8,10 @@ RUN yum -y update && \
 WORKDIR /tmp/pgbouncer
 
 ENV PGBOUNCER_VERSION=1.12.0
-RUN curl -sLO https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
-RUN tar xzf pgbouncer-${PGBOUNCER_VERSION}.tar.gz --strip-components=1
-RUN ./configure --prefix=/usr
-RUN make && make install
+RUN curl -sLO https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz && \
+    tar xzf pgbouncer-${PGBOUNCER_VERSION}.tar.gz --strip-components=1 && \
+    ./configure --prefix=/usr && \
+    make && make install
 
 # Run PgBouncer
 FROM centos:7
