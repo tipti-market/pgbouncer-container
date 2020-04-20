@@ -1,9 +1,11 @@
-FROM registry.access.redhat.com/ubi7/ubi
+FROM registry.access.redhat.com/ubi7/ubi-minimal
 
-RUN yum -y --disableplugin=subscription-manager update && \
-    yum -y --disableplugin=subscription-manager install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum -y --disableplugin=subscription-manager --enablerepo=epel-testing install pgbouncer && \
-    yum --disableplugin=subscription-manager clean all
+RUN curl -sLO https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    rpm -ivh epel-release-latest-7.noarch.rpm && \
+    rm epel-release-latest-7.noarch.rpm && \
+    microdnf -y update && \
+    microdnf -y --enablerepo=epel-testing install pgbouncer && \
+    microdnf clean all
 
 RUN chown pgbouncer:0 /etc/pgbouncer && \
     chmod g=u /etc/pgbouncer && \
