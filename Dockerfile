@@ -1,10 +1,8 @@
 FROM registry.access.redhat.com/ubi7/ubi
 
-# Use EPEL 7 package (pre-release)
-ENV PGBOUNCER_PACKAGE=https://kojipkgs.fedoraproject.org//packages/pgbouncer/1.12.0/4.el7/x86_64/pgbouncer-1.12.0-4.el7.x86_64.rpm
-
 RUN yum -y --disableplugin=subscription-manager update && \
-    yum -y --disableplugin=subscription-manager install ${PGBOUNCER_PACKAGE} && \
+    yum -y --disableplugin=subscription-manager install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    yum -y --disableplugin=subscription-manager --enablerepo=epel-testing install pgbouncer && \
     yum --disableplugin=subscription-manager clean all
 
 RUN chown pgbouncer:0 /etc/pgbouncer && \
