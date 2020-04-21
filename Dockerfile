@@ -1,10 +1,9 @@
 FROM registry.access.redhat.com/ubi7/ubi-minimal
 
-RUN curl -sLO https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    rpm -ivh epel-release-latest-7.noarch.rpm && \
-    rm epel-release-latest-7.noarch.rpm && \
+RUN rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 && \
+    rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     microdnf -y update && \
-    microdnf -y --enablerepo=epel-testing install pgbouncer && \
+    microdnf -y --enablerepo=epel-testing install pgbouncer postgresql && \
     microdnf clean all
 
 RUN chown pgbouncer:0 /etc/pgbouncer && \
@@ -12,6 +11,7 @@ RUN chown pgbouncer:0 /etc/pgbouncer && \
     rm /etc/pgbouncer/pgbouncer.ini
 
 ADD entrypoint.sh /entrypoint.sh
+
 EXPOSE 5432
 USER pgbouncer
 
