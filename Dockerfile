@@ -10,10 +10,10 @@ RUN chown pgbouncer:0 /etc/pgbouncer && \
     chmod g=u /etc/pgbouncer && \
     rm /etc/pgbouncer/pgbouncer.ini
 
-ADD entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 
 EXPOSE 5432
 USER pgbouncer
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/bin/pgbouncer", "/etc/pgbouncer/pgbouncer.ini"]
