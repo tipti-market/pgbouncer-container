@@ -8,7 +8,7 @@ RUN rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 && \
 
 RUN chown pgbouncer:0 /etc/pgbouncer && \
     chmod g=u /etc/pgbouncer && \
-    rm /etc/pgbouncer/pgbouncer.ini
+    rm -f /etc/pgbouncer/pgbouncer.ini /etc/pgbouncer/userlist.txt
 
 ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 
